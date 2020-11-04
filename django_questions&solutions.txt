@@ -1,0 +1,81 @@
+1)django-admin startproject company
+python manage.py startapp staff
+
+
+
+2)class Employee(models.Model):
+    employee_name = models.CharField(max_length=200)
+    department = models.CharField(max_length=200)
+    email = models.EmailField(max_length=254)
+    dob = models.DateField()
+    picture = models.ImageField(upload_to='images/') 
+
+class Department(models.Model):
+    department_name = models.CharField(max_length=200)
+    manager = models.ForeignKey(
+        Employee, related_name="department", on_delete=models.CASCADE)
+    
+
+# Register your models here.
+3)admin.site.register(Employee)
+admin.site.register(Department)
+
+from django.contrib import admin
+
+class EmployeeInline(admin.ModelAdmin):
+    model = Employee
+
+class DepartmentAdmin(admin.ModelAdmin):
+    inlines = [
+        EmployeeInline,
+    ]
+
+4)python manage.py test
+
+
+5)from django.views.generic import ListView
+from django.views.generic import DetailView
+from myapp.models import Department
+
+
+class DepartmentList(ListView):
+    model = Department
+
+class EmplyoeeDetail(DetailView):
+
+    context_object_name = 'Employee'
+    queryset = Employee.objects.all()
+
+
+
+
+6)from django import forms
+from .models import Employee, Department
+
+class createUserForm(forms.ModelForm):
+    employee_name = forms.CharField(widget=forms.TextInput(attrs={'class' : 'form-control'}))
+    department = forms.CharField(widget=forms.TextInput(attrs={'class' : 'form-control'}),required=False)   
+    
+    class Meta:
+        model = Employee
+        fields = ['employee_name','department']
+
+
+7)from django.views.generic import ListView
+from django.views.generic import DetailView
+from myapp.models import Employee
+class EmplyoeeList(ListView):
+    model = Employee
+
+
+class DepartmentDetail(DetailView):
+
+    context_object_name = 'Department'
+    queryset = Department.objects.all()
+
+Is your models.py class for Employee compatible with the form and view?
+Answer = yes
+
+
+8) .html file required for the views in #5 and #7 to work.
+create .html file in tempates folder in app
